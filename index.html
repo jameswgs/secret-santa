@@ -10,69 +10,49 @@ button {
 	font-family: "Courier New";
 	margin-right: 5px;
 }
-button.choosePerson {
-	font-family: "Courier New";
-	border: none;
-	margin: 0px;
+p.block_hidden {
+	display:block;
+    visibility: hidden;
+    height:30px;
+    background-color:#FFF8;
+    padding-left: 10px;
+    padding-top: 8px;
 }
-button.removePerson {
-	font-family: "Courier New";
-	margin: 0px;
-}
-button.notDoneButton {
-	font-family: "Courier New";
-	padding: 0px;
-	margin-right: 5px;
-}
-p.person {
+p.block {
 	display:block;
     height:30px;
     background-color:#FFF8;
     padding-left: 10px;
     padding-top: 8px;
 }
+
 </style>
 </head>
 <body style="font-family:'Courier New'">
 
-<p class="person" id="debug-list"/>
-
 <p>
-<select id="givers">
-</select>
+<select id="givers"></select>
 </p>
 
-<p class="person" id="receiver"/>
+<p class="block_hidden" id="confirm-question">
+    Are you sure you are
+</p>
 
-<p>
+<p class="block_hidden" id="confirm-buttons">
+    <button id="confirm" style="font-family:'Courier New'">YES</button>
+    <button id="deny" style="font-family:'Courier New'">NO</button>
+</p>
+
+<p class="block_hidden" id="final_button_container">
     <button id="show" style="font-family:'Courier New'">SHOW ME!</button>
 </p>
 
-<!-- <h2>Person</h2>
-
-<p class="list" id="notDone"/>
-
-<p class="person" id="person"/>
-
-<p>
-
-<button id="choose" style="font-family:'Courier New'">
-	Choose
-</button>
-
-<button id="reset" style="font-family:'Courier New'">
-	Reset
-</button>
-
-</p>
-
-
-<p id="done" class="list"/> -->
+<p class="block_hidden" id="receiver"/>
 
 <script>
 
 document.body.style.margin = "20px 20px 20px 20px";
-document.body.style.backgroundImage = "url('https://picsum.photos/1124/800')";
+document.body.style.background = "#000";
 document.body.style.backgroundRepeat = "no-repeat";
 
 // from: https://werxltd.com/wp/2010/05/13/javascript-implementation-of-javas-string-hashcode-method/
@@ -89,6 +69,13 @@ String.prototype.hashCode = function() {
 
 let debugList = document.getElementById("debug-list");
 let giversSelect = document.getElementById("givers");
+let receiverDisplay = document.getElementById("receiver");
+let confirmQuestionDisplay = document.getElementById("confirm-question");
+let confirmButtonsContainer = document.getElementById("confirm-buttons");
+let confirmYesButton = document.getElementById("confirm");
+let confirmNoButton = document.getElementById("deny");
+let finalButtonContainer = document.getElementById("final_button_container");
+
 
 let santas = [
     "Monica",
@@ -134,17 +121,45 @@ function showDebugList()
     debugList.innerHTML = JSON.stringify(mapToObj(santaMap));
 }
 
-function showReceiver()
+function showConfirmation()
 {
     let selectedOption = giversSelect.options[giversSelect.selectedIndex];
-    console.log(santaMap.get(selectedOption.text));
+    if(selectedOption.value != "")
+    {
+        confirmQuestionDisplay.innerHTML = "Are you sure you are \"" + selectedOption.text + "\"?"
+        confirmQuestionDisplay.className = "block";
+        confirmButtonsContainer.className = "block";
+    }
+    else
+    {
+        reset();
+    }
 }
 
-showButton.onclick = showReceiver;
+function showFinalButton()
+{
+    finalButtonContainer.className = "block";
+}
 
 function reset()
 {
-    giversSelect.options.add( new Option("Select your name...", false, false) );
+    giversSelect.selectedIndex = 0;
+    confirmQuestionDisplay.className = "block_hidden";
+    confirmButtonsContainer.className = "block_hidden";
+    receiverDisplay.className = "block_hidden";    
+    finalButtonContainer.className = "block_hidden";
+}
+
+function showReceiver()
+{
+    let selectedOption = giversSelect.options[giversSelect.selectedIndex];
+    receiverDisplay.innerHTML = santaMap.get(selectedOption.text);
+    receiverDisplay.className = "block";
+}
+
+function init()
+{
+    giversSelect.options.add( new Option("Select your name...", "", false) );
 
     for(var i = 0; i < santas.length; i++)
     {
@@ -153,9 +168,12 @@ function reset()
     }
 }
 
-reset();
+giversSelect.onchange = showConfirmation;
+showButton.onclick = showReceiver;
+confirmYesButton.onclick = showFinalButton;
+confirmNoButton.onclick = reset;
 
-// showDebugList();
+init();
 
 </script>
 
