@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+p.list {
+	display:block;
+    height:30px;
+}
+button {
+	font-family: "Courier New";
+	margin-right: 5px;
+}
+button.choosePerson {
+	font-family: "Courier New";
+	border: none;
+	margin: 0px;
+}
+button.removePerson {
+	font-family: "Courier New";
+	margin: 0px;
+}
+button.notDoneButton {
+	font-family: "Courier New";
+	padding: 0px;
+	margin-right: 5px;
+}
+p.person {
+	display:block;
+    height:30px;
+    background-color:#FFF8;
+    padding-left: 10px;
+    padding-top: 8px;
+}
+</style>
+</head>
+<body style="font-family:'Courier New'">
+
+<p class="person" id="debug-list"/>
+
+<p>
+<select id="givers">
+</select>
+</p>
+
+<p class="person" id="receiver"/>
+
+<p>
+    <button id="show" style="font-family:'Courier New'">SHOW ME!</button>
+</p>
+
+<!-- <h2>Person</h2>
+
+<p class="list" id="notDone"/>
+
+<p class="person" id="person"/>
+
+<p>
+
+<button id="choose" style="font-family:'Courier New'">
+	Choose
+</button>
+
+<button id="reset" style="font-family:'Courier New'">
+	Reset
+</button>
+
+</p>
+
+
+<p id="done" class="list"/> -->
+
+<script>
+
+document.body.style.margin = "20px 20px 20px 20px";
+document.body.style.backgroundImage = "url('https://picsum.photos/1124/800')";
+document.body.style.backgroundRepeat = "no-repeat";
+
+// from: https://werxltd.com/wp/2010/05/13/javascript-implementation-of-javas-string-hashcode-method/
+String.prototype.hashCode = function() {
+  var hash = 0, i, chr;
+  if (this.length === 0) return hash;
+  for (i = 0; i < this.length; i++) {
+    chr   = this.charCodeAt(i);
+    hash  = ((hash << 5) - hash) + chr;
+    hash |= 0; // Convert to 32bit integer
+  }
+  return hash;
+};
+
+let debugList = document.getElementById("debug-list");
+let giversSelect = document.getElementById("givers");
+
+let santas = [
+    "Monica",
+    "Phil"
+];
+
+let seed = "daiocsdankl";
+let santaMap = createMapping();
+let showButton = document.getElementById("show");
+
+function createMapping()
+{
+    let hashes = new Map(santas.map(function (name, index) {
+        return [ name, ( name + seed ).hashCode() ];
+    }));
+    
+    console.log(JSON.stringify(mapToObj(hashes)));
+
+    let shuffled = santas.sort(function (a, b) {
+        return -( hashes.get(a) - hashes.get(b) );
+    });
+
+    console.log(JSON.stringify(shuffled));
+
+    let map = new Map(santas.map(function (giver, index, arr) {
+        let receiver = arr[(index + 1) % arr.length];
+        return [giver, receiver ];
+    }));
+    
+    console.log(JSON.stringify(mapToObj(map)));
+
+    return map;
+}
+
+function mapToObj(map) {
+    const obj = {}
+    for (let [k, v] of map) obj[k] = v
+    return obj
+}
+
+function showDebugList()
+{
+    debugList.innerHTML = JSON.stringify(mapToObj(santaMap));
+}
+
+function showReceiver()
+{
+    let selectedOption = giversSelect.options[giversSelect.selectedIndex];
+    console.log(santaMap.get(selectedOption.text));
+}
+
+showButton.onclick = showReceiver;
+
+function reset()
+{
+    giversSelect.options.add( new Option("Select your name...", false, false) );
+
+    for(var i = 0; i < santas.length; i++)
+    {
+        var giver = santas[i];
+        giversSelect.options.add( new Option(giver, giver, false) );
+    }
+}
+
+reset();
+
+// showDebugList();
+
+</script>
+
+</body>
+</html>
