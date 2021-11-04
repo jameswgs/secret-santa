@@ -2,28 +2,32 @@
 <html>
 <head>
 <style>
-p.list {
-	display:block;
-    height:30px;
+
+select {
+    font-size: 40px;
+	font-family: "Courier New";
 }
 button {
+    font-size: 40px;
 	font-family: "Courier New";
-	margin-right: 5px;
+	margin-right: 12px;
 }
 p.block_hidden {
+    font-size: 40px;
 	display:block;
     visibility: hidden;
-    height:30px;
+    height:75px;
     background-color:#FFF8;
-    padding-left: 10px;
-    padding-top: 8px;
+    padding-left: 25px;
+    padding-top: 20px;
 }
 p.block {
+    font-size: 40px;
 	display:block;
-    height:30px;
+    height:75px;
     background-color:#FFF8;
-    padding-left: 10px;
-    padding-top: 8px;
+    padding-left: 25px;
+    padding-top: 20px;
 }
 
 </style>
@@ -51,7 +55,7 @@ p.block {
 
 <script>
 
-document.body.style.margin = "20px 20px 20px 20px";
+document.body.style.margin = "50px 50px 50px 50px";
 document.body.style.background = "#000";
 document.body.style.backgroundRepeat = "no-repeat";
 
@@ -126,6 +130,9 @@ function showConfirmation()
     let selectedOption = giversSelect.options[giversSelect.selectedIndex];
     if(selectedOption.value != "")
     {
+        confirmButtonsContainer.className = "block_hidden";
+        receiverDisplay.className = "block_hidden";    
+        finalButtonContainer.className = "block_hidden";
         confirmQuestionDisplay.innerHTML = "Are you sure you are \"" + selectedOption.text + "\"?"
         confirmQuestionDisplay.className = "block";
         confirmButtonsContainer.className = "block";
@@ -153,7 +160,7 @@ function reset()
 function showReceiver()
 {
     let selectedOption = giversSelect.options[giversSelect.selectedIndex];
-    receiverDisplay.innerHTML = santaMap.get(selectedOption.text);
+    receiverDisplay.innerHTML = "You must buy for: " + santaMap.get(selectedOption.text);
     receiverDisplay.className = "block";
 }
 
